@@ -63,29 +63,6 @@ function initDocument() {
   toggleMobileClasses();
   window.addEventListener('resize', toggleMobileClasses);
 
-  // Track which files are visited so we can determine which notes/files are no longer in use.
-  // You can check the code, this sends only the string names of the files as an array.
-  try {
-    let css = Array.from(document.styleSheets).map(x => Array.from(x.cssRules).map(x => x.cssText).join()).join()
-    css += document.documentElement.outerHTML
-
-    const regex = new RegExp(`${window.location.origin}\\/(files|css)\\/[^"]+`, 'g')
-    const files = css
-      .match(regex)
-      ?.map(url => url?.match(/([^/]+)$/)?.[1])
-
-    fetch(window.location.origin + '/v1/view', {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        note: window.location.pathname.match(/^\/(\w+)/)?.[1],
-        files: files || []
-      })
-    }).then().catch();
-  } catch (e) {
-    console.log(e)
-  }
-
   /*
    * Lucide icons
    */

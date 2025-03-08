@@ -2,7 +2,7 @@ import { createMiddleware } from 'hono/factory'
 import { sha256 } from '../helpers'
 import { HTTPException } from 'hono/http-exception'
 import { appInstance } from '../../index'
-import { TableRow } from '../Database'
+import db, { TableRow } from '../Database'
 import { ContentfulStatusCode } from 'hono/dist/types/utils/http-status'
 
 export const withAuthenticatedUser = createMiddleware(async (c, next) => {
@@ -49,7 +49,6 @@ export const withAuthenticatedUser = createMiddleware(async (c, next) => {
   await next()
 })
 
-
 /**
  * Take the values from the headers, and add them into the normal .content object
  */
@@ -84,6 +83,34 @@ export const checkSize = createMiddleware(async (c, next) => {
     throw new HTTPException(413, {
       message: `Uploaded ${filetype.toUpperCase()} file size is too large. Please consider resizing, or hosting any large images on Imgur and linking back into your note.`
     }) // Filesize too large
+  }
+  await next()
+})
+
+/**
+ * Track the last viewed time of notes and files
+ */
+export const trackView = createMiddleware(async (c, next) => {
+  let filename, extension
+  // Get the filename and extension from the path
+  // The substring is to remove the leading slash
+  const path = c.req.path.substring(1).split('/')
+  if (path.length === 1) {
+    // This is a file at the root, must be a note
+    filename = path[0]
+    extension = 'html'
+  } else if (['css', 'files', 'file'].includes(path[0])) {
+    // CSS or file attachment
+    const match = path[path.length - 1].match(/^(\w+)\.(\w+)/)
+    if (match && match.length >= 3) {
+      filename = match[1]
+      extension = match[2]
+    }
+  }
+
+  // Finally, update the accessed column in the database
+  if (filename && extension) {
+    db.prepare('UPDATE files SET accessed = unixepoch() WHERE filename = ? AND filetype = ?').run(filename, extension)
   }
   await next()
 })

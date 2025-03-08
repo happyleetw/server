@@ -12,6 +12,7 @@ import { router as accountRouter } from './v1/routes/account'
 import { router as viewRouter } from './v1/routes/view'
 import { HTTPException } from 'hono/http-exception'
 import { Cron } from './v1/Cron'
+import { trackView } from './v1/routes/middleware'
 
 require('dotenv').config()
 
@@ -40,6 +41,7 @@ app.use('*', etag())
 // Rewrite note paths to the full HTML file
 app.get(
   '/:filename{^\\w{' + Math.max(1, appInstance.folderPrefix) + ',}$}',
+  trackView,
   serveStatic({
     root: '../userfiles/notes',
     rewriteRequestPath: (path) => {
@@ -49,29 +51,30 @@ app.get(
     }
   })
 )
-app.use('/css/*', serveStatic({ root: '../userfiles' }))
-app.use('/files/*', serveStatic({ root: '../userfiles' }))
+app.use('/css/*', trackView, serveStatic({ root: '../userfiles' }))
+app.use('/files/*', trackView, serveStatic({ root: '../userfiles' }))
 
 // Rewrite legacy hosting paths
 // Only the main share.note.sx server needs these
 if (process.env.LEGACY_PATHS) {
   app.get(
-      '/file/notesx/*',
-      serveStatic({
-        root: '..',
-        rewriteRequestPath: (path) => {
-          const match = path.match(/^\/file\/notesx\/(css|files)\/([a-z0-9.]+)$/)
-          if (match) {
-            // User files
-            const length = appInstance.folderPrefix
-            const subdir = length ? match[2].substring(0, length) + '/' : ''
-            return `/userfiles/${match[1]}/${subdir}${match[2]}`
-          } else {
-            // Static assets
-            return '/app/static' + path.substring(12)
-          }
+    '/file/notesx/*',
+    trackView,
+    serveStatic({
+      root: '..',
+      rewriteRequestPath: (path) => {
+        const match = path.match(/^\/file\/notesx\/(css|files)\/([a-z0-9.]+)$/)
+        if (match) {
+          // User files
+          const length = appInstance.folderPrefix
+          const subdir = length ? match[2].substring(0, length) + '/' : ''
+          return `/userfiles/${match[1]}/${subdir}${match[2]}`
+        } else {
+          // Static assets
+          return '/app/static' + path.substring(12)
         }
-      })
+      }
+    })
   )
 }
 
