@@ -11,7 +11,12 @@ export class Cron {
   constructor (app: App) {
     this.app = app
     this.paths = new Paths(app)
+
+    // Delete expired files
     cron.schedule('* * * * *', this.deleteExpiredFiles)
+
+    // Backup the database daily
+    cron.schedule('0 0 * * *', this.backupDatabase)
   }
 
   async deleteExpiredFiles () {
@@ -39,5 +44,9 @@ export class Cron {
 
       console.log('Deleted expired file ' + url)
     }
+  }
+
+  backupDatabase () {
+    db.backup(this.app.baseFolder + '/db/backup.sqlite').then().catch()
   }
 }
