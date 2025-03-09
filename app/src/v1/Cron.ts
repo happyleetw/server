@@ -3,6 +3,7 @@ import db, { TableRow } from './Database'
 import { unlink } from 'node:fs/promises'
 import { Paths } from './File'
 import { App } from '../types'
+import log from './Log'
 
 export class Cron {
   app: App
@@ -47,6 +48,8 @@ export class Cron {
   }
 
   backupDatabase () {
-    db.backup(this.app.baseFolder + '/db/backup.sqlite').then().catch()
+    db.backup(this.app.baseFolder + '/db/backup.sqlite')
+      .then(r => log.console('Database backup completed'))
+      .catch(e => log.console('Database backup failed'))
   }
 }

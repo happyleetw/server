@@ -91,7 +91,7 @@ app.onError((error, c) => {
     status,
     endpoint: c.req.path
   })
-  console.log(new Date().toISOString() + ': Error ' + err.status + ' on ' + c.req.url)
+  log.console('Error ' + err.status + ' on ' + c.req.url)
 
   let userMessage = ''
   if (status === 500) {

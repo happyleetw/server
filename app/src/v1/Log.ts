@@ -52,6 +52,9 @@ export class Log {
         data
       )
   }
+  console (message: string) {
+    console.log(new Date().toISOString() + ': ' + message)
+  }
 }
 
 export default new Log()
