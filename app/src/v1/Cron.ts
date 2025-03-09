@@ -47,9 +47,13 @@ export class Cron {
     }
   }
 
-  backupDatabase () {
-    db.backup(this.app.baseFolder + '/db/backup.sqlite')
-      .then(() => log.console('Database backup completed'))
-      .catch(() => log.console('Database backup failed'))
+  async backupDatabase () {
+    try {
+      await db.backup(this.app.baseFolder + '/db/backup.sqlite')
+      log.console('Database backup completed')
+      db.exec('VACUUM')
+    } catch (e) {
+      log.console('Database backup failed')
+    }
   }
 }
