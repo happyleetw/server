@@ -21,3 +21,9 @@ Backend server for [Share Note](https://github.com/alangrainger/share-note/).
 | CLOUDFLARE_TURNSTILE_SECRET |                     | *OPTIONAL.* If you want to use Turnstile to show a captcha when someone creates an account.                                              |
 | CLOUDFLARE_ZONE_ID          |                     | *OPTIONAL.* If you want to use Cloudflare proxy in front of your server.                                                                 |
 | CLOUDFLARE_API_KEY          |                     | *OPTIONAL.* If you want to use Cloudflare proxy in front of your server.                                                                 |
+
+## Change your Obsidian plugin to point to your server
+
+Change the server URL in your `<VAULT_DIR>/.obsidian/plugins/share-note/data.json` file.
+
+This file will sync to all your devices using your normal sync method, so all your devices will update.
