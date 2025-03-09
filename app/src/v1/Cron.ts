@@ -49,7 +49,7 @@ export class Cron {
 
   backupDatabase () {
     db.backup(this.app.baseFolder + '/db/backup.sqlite')
-      .then(r => log.console('Database backup completed'))
-      .catch(e => log.console('Database backup failed'))
+      .then(_ => log.console('Database backup completed'))
+      .catch(_ => log.console('Database backup failed'))
   }
 }
