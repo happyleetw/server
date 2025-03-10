@@ -1,0 +1,12 @@
+html, body {
+    overflow: visible !important;
+}
+
+div.view-content {
+    height: 100% !important;
+    padding: 0 !important;
+}
+
+.callout.is-collapsible .callout-title {
+    cursor: pointer !important;
+}

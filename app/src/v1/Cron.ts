@@ -14,10 +14,10 @@ export class Cron {
     this.paths = new Paths(app)
 
     // Delete expired files
-    cron.schedule('* * * * *', this.deleteExpiredFiles)
+    cron.schedule('* * * * *', () => this.deleteExpiredFiles())
 
     // Backup the database daily
-    cron.schedule('0 0 * * *', this.backupDatabase)
+    cron.schedule('0 0 * * *', () => this.backupDatabase())
   }
 
   async deleteExpiredFiles () {
@@ -53,6 +53,7 @@ export class Cron {
       log.console('Database backup completed')
       db.exec('VACUUM')
     } catch (e) {
+      console.error(e)
       log.console('Database backup failed')
     }
   }
