@@ -87,7 +87,7 @@ export type Semver = [number, number, number]
  * Check whether the user's plugin version meets a minimum version
  *
  * @example
- * checkVersion('0.8.7', '0.9.0') => false
+ * checkVersion('0.8.7', [0, 9, 0]) => false
  */
 export function checkVersion (version: string, minimumRequired: Semver) {
   const userVersion = version.split('.')

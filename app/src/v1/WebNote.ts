@@ -1,8 +1,10 @@
 import { App } from '../types'
 import { readFileSync } from 'node:fs'
+import { checkVersion } from './helpers'
 
 const htmlTemplate = readFileSync('./src/v1/templates/note.html', 'utf8')
 const decryptionFunctions = '<script>' + readFileSync('./src/v1/templates/decrypt.js', 'utf8') + '</script>'
+const decryptionFunctions_v1_1_3 = '<script>' + readFileSync('./src/v1/templates/decrypt-v1.1.3.js', 'utf8') + '</script>'
 const plaintextFunctions = '<script>initDocument();</script>'
 
 export default class WebNote {
@@ -92,7 +94,7 @@ export default class WebNote {
     this.replace(this.placeholders.decryptionFunctions, plaintextFunctions)
   }
 
-  addEncryptedData (data: any) {
+  addEncryptedData (data: any, pluginVersion: string) {
     if (typeof data === 'string') {
       const html = `<div id='encrypted-data' style='display: none'>${data}</div>`
       this.replace(this.placeholders.encryptedData, html)
@@ -101,7 +103,12 @@ export default class WebNote {
     // when the note decrypts
     this.replace(this.placeholders.noteContent, '<div id="template-user-data">Encrypted note</div>')
     // Add the decryption functions
-    this.replace(this.placeholders.decryptionFunctions, decryptionFunctions)
+    if (!checkVersion(pluginVersion, [1, 2, 0])) {
+      // Legacy decryption for plugin versions < v1.2.0
+      this.replace(this.placeholders.decryptionFunctions, decryptionFunctions_v1_1_3)
+    } else {
+      this.replace(this.placeholders.decryptionFunctions, decryptionFunctions)
+    }
   }
 
   enableMathjax (enable = false) {

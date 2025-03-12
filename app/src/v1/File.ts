@@ -218,7 +218,7 @@ export default class File extends Controller {
       note.setMetaDescription(template.description)
     } else {
       // Encrypted contents
-      note.addEncryptedData(template.content)
+      note.addEncryptedData(template.content, this.context.get('pluginVersion'))
     }
 
     if (Array.isArray(template.elements)) {

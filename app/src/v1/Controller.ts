@@ -15,6 +15,7 @@ export default class Controller {
     this.post = c.get('content') || {}
     this.user = c.get('user') || {}
     this.request = c.req
+    c.set('pluginVersion', c.req.header('x-sharenote-version'))
     this.context = c
   }
 }
