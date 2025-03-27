@@ -4,7 +4,7 @@ Backend server for [Share Note](https://github.com/alangrainger/share-note/).
 
 ## Change your Obsidian plugin to point to your server
 
-Change the server URL in your `<VAULT_DIR>/.obsidian/plugins/share-note/data.json` file.
+Change the server URL in your `<VAULT_DIR>/.obsidian/plugins/share-note/data.json` file. Either reload the plugin or reload Obsidian for the changes to take effect.
 
 This file will sync to all your devices using your normal sync method, so all your devices will update.
 
